@@ -1,0 +1,127 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "jobId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Unique GUID"
+      }
+    },
+    "sqlDWServerUrl": {
+      "type": "string",
+      "defaultValue": "testdwserver234.database.windows.net",
+      "metadata": {
+        "description": "Ex- inforp2ptest.database.windows.net"
+      }
+    },
+    "sqlDWDBName": {
+      "type": "string",
+      "defaultValue": "testdwdb234",
+      "metadata": {
+        "description": "SQL Datawarehouse Database Name"
+      }
+    },
+    "sqlDWServerUserName": {
+      "type": "string",
+      "defaultValue": "sysgain",
+      "metadata": {
+        "description": "Sql Data Warehouse User Name"
+      }
+    },
+    "sqlDWServerPassword": {
+      "type": "securestring",
+      "defaultValue": "Sysga1n4205!",
+      "metadata": {
+        "description": "Sql Data Warehouse Password"
+      }
+    }
+  },
+  "variables": {
+    "location": "South Central US",
+    "credentialName": "sqldwcreds",
+    "accountName": "createtable",
+    "runbookName": "CreateTable",
+    "baseURL": "https://susehpcnc.blob.core.windows.net/test/",
+    "scriptUri": "[concat(variables('baseURL'),'createTable.ps1')]",
+    "runbookDescription": "Create a Database Table in User provided Datawarehouse",
+    "sku": "Basic"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Automation/automationAccounts",
+      "name": "[variables('accountName')]",
+      "apiVersion": "2015-01-01-preview",
+      "location": "[variables('location')]",
+      "tags": {},
+      "properties": {
+        "sku": {
+          "name": "[variables('sku')]"
+        }
+      },
+      "resources": [
+        {
+          "name": "[variables('runbookName')]",
+          "type": "runbooks",
+          "apiVersion": "2015-01-01-preview",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', variables('accountName'))]"
+          ],
+          "tags": {},
+          "properties": {
+            "runbookType": "Script",
+            "logProgress": "false",
+            "logVerbose": "false",
+            "description": "[variables('runbookDescription')]",
+            "publishContentLink": {
+              "uri": "[variables('scriptUri')]",
+              "version": "1.0.0.0"
+            }
+          }
+        },
+        {
+          "name": "[variables('credentialName')]",
+          "type": "credentials",
+          "apiVersion": "2015-01-01-preview",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', variables('accountName'))]"
+          ],
+          "tags": {},
+          "properties": {
+            "userName": "[parameters('sqlDWServerUserName')]",
+            "password": "[parameters('sqlDWServerPassword')]"
+          }
+        },
+        {
+          "name": "[concat(variables('accountName'), '/', parameters('jobId'))]",
+          "type": "Microsoft.Automation/automationAccounts/jobs",
+          "apiVersion": "2015-10-31",
+          "location": "[variables('location')]",
+          "tags": {
+            "key": "value"
+          },
+          "properties": {
+            "runbook": {
+              "name": "[variables('runbookName')]"
+            },
+            "parameters": {
+              "credentialName": "[variables('credentialName')]",
+              "ServerName": "[parameters('sqlDWServerUrl')]",
+              "DatabaseName": "[parameters('sqlDWDBName')]",
+              "DBUsername": "[parameters('sqlDWServerUserName')]",
+              "DBPassword": "[parameters('sqlDWServerPassword')]"
+            }
+          },
+          "dependsOn": [
+            "[concat('Microsoft.Automation/automationAccounts/', variables('accountName'))]",
+            "[resourceId('Microsoft.Automation/automationAccounts/credentials', variables('accountName'), variables('credentialName'))]",
+            "[resourceId('Microsoft.Automation/automationAccounts/runbooks', variables('accountName'), variables('runbookName'))]"
+          ]
+        }
+      ]
+    }
+  ]
+}
