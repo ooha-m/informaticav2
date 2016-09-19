@@ -1,50 +1,8 @@
-<#
-    .DESCRIPTION
-This file create a sql data warehouse and load data
-
-
-    .NOTES
-        AUTHOR: UD
-        LASTEDIT: Apr 30, 2016
-#>
-
 workflow CreateTable
 {
-<#	 param (
-    [Parameter(Mandatory=$true)]
-    [string] 
-    $Tdid,
-    
-    [Parameter(Mandatory=$true)]
-    [string] 
-    $accountName,
-    
-    [Parameter(Mandatory=$true)]
-    [string] 
-    $variableName,
-    
-    [Parameter(Mandatory=$true)]
-    [string] 
-    $ISVName,
-    
-    [Parameter(Mandatory=$true)]
-    [string] 
-    $credentialName,
-    
-    [Parameter(Mandatory=$true)]
-    [string] 
-    $resourceGroupName
-    
-    )
-    #>
-	# Login to account and choose subscription
-	
 	param(
-		[Parameter(Mandatory=$true)]
-    	[string] 
-    	$credentialName,
 		
-		[Parameter(Mandatory=$true)]
+	[Parameter(Mandatory=$true)]
     	[string] 
     	$ServerName,
 
@@ -60,26 +18,12 @@ workflow CreateTable
         [string] 
         $DBPassword 
 	)
- #    $CredentialAssetName = $credentialName
-#	   $Cred = Get-AutomationPSCredential -Name $CredentialAssetName
-#    Write-Output $Cred
-	#Login-AzureRmAccount
-#	if(!$Cred) {
- #       Throw "Could not find an Automation Credential Asset named '${CredentialAssetName}'. Make sure you have created one in this Automation Account."
- #   }
-	#Add-AzureRmAccount -Credential $Cred
-  #	Login-AzureRmAccount -Credential $Cred 
-  #  $subscriptionList = Get-AzureRmSubscription
-  #  Select-AzureRmSubscription -SubscriptionId "7eab3893-bd71-4690-84a5-47624df0b0e5"
-  #  New-AzureRmResourceGroup -Name ADFTutorialResourceGroup  -Location "West US" 
-     
-    #  $DatabaseName1 = $DatabaseName  
 	inlinescript
-    {
+       {
       
 	
-    $ServerName1= $Using:ServerName   
-    $DatabaseName1 = $Using:DatabaseName
+    	$ServerName1= $Using:ServerName   
+    	$DatabaseName1 = $Using:DatabaseName
 	$DBUsername1 = 	$Using:DBUsername
 	$DBPassword1 = $Using:DBPassword 
     
@@ -90,11 +34,11 @@ workflow CreateTable
 	
 	Write-Output $ServerName1
 	Write-Output $DatabaseName1
-    Write-Output $DBUsername1
-    Write-Output $DBPassword1
-    $MasterDatabaseConnection = New-Object System.Data.SqlClient.SqlConnection
-    $MasterDatabaseConnection.ConnectionString = "Server = $ServerName1; Database = $DatabaseName1; User ID = $DBUsername1; Password = $DBPassword1;"
-    $MasterDatabaseConnection.Open();
+    	Write-Output $DBUsername1
+    	Write-Output $DBPassword1
+    	$MasterDatabaseConnection = New-Object System.Data.SqlClient.SqlConnection
+    	$MasterDatabaseConnection.ConnectionString = "Server = $ServerName1; Database = $DatabaseName1; User ID = $DBUsername1; Password = $DBPassword1;"
+    	$MasterDatabaseConnection.Open();
     
     Write-Output "connection successful-----" 
     
@@ -122,8 +66,8 @@ workflow CreateTable
                 scbytes varchar(500),
                 csbytes varchar(500),
                 timetaken varchar(500),
-				row19 varchar(500)
-        )
+		row19 varchar(500)
+        );
         
        
     "
