@@ -86,8 +86,7 @@
             "defaultValue": "adfgetstarted/partitioneddata"
         },
         "adfstorageAccountName": {
-            "type": "string",
-            "defaultValue": "testadf323"
+            "type": "string"
         },
         "apiVersion": {
             "type": "string",
