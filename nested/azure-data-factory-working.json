@@ -11,7 +11,7 @@
         },
         "location": {
             "type": "string",
-            "defaultValue": "westus",
+            "defaultValue": "Southeast Asia",
             "allowedValues": [
                 "East US",
                 "eastus",
